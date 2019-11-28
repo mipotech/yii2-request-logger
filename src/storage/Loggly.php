@@ -24,7 +24,7 @@ class Loggly extends BaseStorage
     public function init()
     {
         parent::init();
-        if (empty($this->appId)) {
+        if (empty($this->token)) {
             throw new InvalidConfigException('No Loggly App ID specified!');
         }
     }
