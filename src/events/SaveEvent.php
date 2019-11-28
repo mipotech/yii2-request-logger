@@ -7,7 +7,7 @@ use yii\base\Event;
 class SaveEvent extends Event
 {
     /**
-     * @var mipotech\requestlogger\models\SystemLog;
+     * @var mipotech\requestlogger\models\RequestLog;
      */
     public $model;
 }

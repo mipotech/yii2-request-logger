@@ -3,7 +3,8 @@
 namespace mipotech\requestlogger\storage;
 
 use yii\base\Component;
-use mipotech\responselogger\models\SystemLog;
+use mipotech\requestlogger\events\SaveEvent;
+use mipotech\requestlogger\models\RequestLog;
 
 /**
  * Base storage class (abstract)
@@ -20,10 +21,10 @@ abstract class BaseStorage extends Component
     /**
      * Public wrapper for the actual record saving
      *
-     * @param SystemLog $model the model represting the request data
+     * @param RequestLog $model the model represting the request data
      * @return bool
      */
-    public function save(SystemLog $model): bool
+    public function save(RequestLog $model): bool
     {
         $event = new SaveEvent([
             'model' => $model,
@@ -47,8 +48,8 @@ abstract class BaseStorage extends Component
     /**
      * Perform the actual record saving. Implemented by each child class
      *
-     * @param SystemLog $model the model represting the request data
+     * @param RequestLog $model the model represting the request data
      * @return bool
      */
-    abstract protected function saveInternal(SystemLog $model): bool;
+    abstract protected function saveInternal(RequestLog $model): bool;
 }

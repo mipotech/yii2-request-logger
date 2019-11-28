@@ -3,6 +3,7 @@
 namespace mipotech\requestlogger\storage;
 
 use Yii;
+use mipotech\requestlogger\models\RequestLog;
 use MongoDB\BSON\UTCDateTime;
 
 /**
@@ -36,7 +37,7 @@ class Rds extends BaseStorage
     /**
      * @inheritdoc
      */
-    protected function saveInternal(SystemLog $model): bool
+    protected function saveInternal(RequestLog $model): bool
     {
         $command = Yii::$app->{$this->db}->createCommand();
         $recordData = $model->toArray();

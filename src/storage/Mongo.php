@@ -3,6 +3,7 @@
 namespace mipotech\requestlogger\storage;
 
 use Yii;
+use mipotech\requestlogger\models\RequestLog;
 use MongoDB\BSON\UTCDateTime;
 
 /**
@@ -24,13 +25,12 @@ class Mongo extends BaseStorage
     /**
      * @inheritdoc
      */
-    protected function saveInternal(SystemLog $model): bool
+    protected function saveInternal(RequestLog $model): bool
     {
-        // override default datetime value with a MongoDB datetime
-        $model->datetime = new UTCDateTime(round(microtime(true) * 1000));
-
-        $collection = Yii::$app->{$this->id}->getCollection($this->collection);
-        $this->insertId = $collection->insert($model->toArray());
+        $collection = Yii::$app->{$this->db}->getCollection($this->collection);
+        $dataArr = $model->toArray();
+        $dataArr['datetime'] = new UTCDateTime(round(microtime(true) * 1000));
+        $this->insertId = $collection->insert($dataArr);
         return !empty($this->insertId);
     }
 
