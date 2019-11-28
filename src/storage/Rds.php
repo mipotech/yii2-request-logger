@@ -50,6 +50,7 @@ class Rds extends BaseStorage
         if ($res) {
             $this->insertId = Yii::$app->{$this->db}->getLastInsertID();
         }
+        return !empty($this->insertId);
     }
 
     /**
@@ -62,9 +63,9 @@ class Rds extends BaseStorage
         if ($value === false || $this->serializer === false) {
             return $value;
         } elseif ($this->serializer === null) {
-            $value = unserialize($value);
+            $value = serialize($value);
         } else {
-            $value = call_user_func($this->serializer[1], $value);
+            $value = call_user_func($this->serializer[0], $value);
         }
         return $value;
     }
