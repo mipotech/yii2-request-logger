@@ -38,7 +38,7 @@ class Response extends \yii\web\Response
     /**
      * @var string
      */
-    public $storageClass = 'Mongo';
+    public $storageClass = 'mipotech\requestlogger\storage\Mongo';
     /**
      * @var array
      */
@@ -65,12 +65,11 @@ class Response extends \yii\web\Response
         }
 
         // Verify and instantiate the storage class
-        $storageClassName = "mipotech\\requestlogger\\storage\\{$this->storageClass}";
-        if (!class_exists($storageClassName)) {
-            throw new InvalidConfigException("Storage class {$storageClassName} not found");
+        if (!class_exists($this->storageClass)) {
+            throw new InvalidConfigException("Storage class {$this->storageClass} not found");
         }
         $storageObject = Yii::createObject(ArrayHelper::merge([
-            'class' => $storageClassName,
+            'class' => $this->storageClass,
         ], $this->storageConfig));
 
         // Prepare the model that represents the request
