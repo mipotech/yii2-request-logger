@@ -42,7 +42,7 @@ class Rds extends BaseStorage
         $command = Yii::$app->{$this->db}->createCommand();
         $recordData = $model->toArray();
         array_walk($recordData, function(&$elem) {
-            if (!is_scalar($elem)) {
+            if (!is_scalar($elem) && !is_null($elem)) {
                 $elem = $this->serialize($elem);
             }
         });

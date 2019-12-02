@@ -83,10 +83,11 @@ class Response extends \yii\web\Response
             'url' => Yii::$app->request->absoluteUrl,
             'request_headers' => Yii::$app->request->headers->toArray(),
             'verb' => Yii::$app->request->method,
-            'payload' => Yii::$app->request->bodyParams,
+            'payload' => Yii::$app->request->bodyParams ?: null,
             'response' => $data,
             'response_code' => $this->statusCode,
             'response_headers' => $this->headers->toArray(),
+            'user_id' => !empty(Yii::$app->user) && !Yii::$app->user->getIsGuest() ? Yii::$app->user->id : null,
         ]);
         if (!$model->validate()) {
             Yii::warning('RequestLog validation errors:' . PHP_EOL . print_r($model->errors, true), __CLASS__);

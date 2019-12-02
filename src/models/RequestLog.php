@@ -42,6 +42,10 @@ class RequestLog extends Model
      * @var array
      */
     public $response_headers;
+    /**
+     * @var string|int
+     */
+    public $user_id;
 
     /**
      * @inheritdoc
@@ -52,7 +56,7 @@ class RequestLog extends Model
             [['datetime', 'ip', 'url', 'verb', 'response', 'response_code', 'request_headers', 'response_headers'], 'required'],
             [['url', 'verb'], 'string'],
             [['response_code'], 'number'],
-            [['payload'], 'safe'],
+            [['payload', 'user_id'], 'safe'],
             ['ip', 'ip'],
         ];
     }
