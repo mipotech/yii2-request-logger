@@ -53,10 +53,10 @@ class RequestLog extends Model
     public function rules()
     {
         return [
-            [['datetime', 'ip', 'url', 'verb', 'response', 'response_code', 'request_headers', 'response_headers'], 'required'],
+            [['datetime', 'ip', 'url', 'verb', 'response_code', 'request_headers', 'response_headers'], 'required'],
             [['url', 'verb'], 'string'],
             [['response_code'], 'number'],
-            [['payload', 'user_id'], 'safe'],
+            [['payload', 'user_id', 'response'], 'safe'],
             ['ip', 'ip'],
         ];
     }
