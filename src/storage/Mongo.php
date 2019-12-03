@@ -30,7 +30,19 @@ class Mongo extends BaseStorage
         $collection = Yii::$app->{$this->db}->getCollection($this->collection);
         $dataArr = $model->toArray();
         $dataArr['datetime'] = new UTCDateTime(round(microtime(true) * 1000));
-        $this->insertId = $collection->insert($dataArr);
+        if (is_array($dataArr['payload'])) {
+            $dataArr['payload'] = $this->sanitizeArrayKeys($dataArr['payload']);
+        }
+        if (is_array($dataArr['response'])) {
+            $dataArr['response'] = $this->sanitizeArrayKeys($dataArr['response']);
+        }
+
+        try {
+            $this->insertId = $collection->insert($dataArr);
+        } catch(\Exception $ex) {
+            Yii::error($ex->getMessage());
+            return false;
+        }
         return !empty($this->insertId);
     }
 
@@ -39,6 +51,30 @@ class Mongo extends BaseStorage
      */
     public function getInsertId()
     {
-        return (string)$this->insertId;
+        return $this->insertId ? (string)$this->insertId : null;
+    }
+
+    /**
+     * Sanitize data arrays to remove keys that begin with a dollar sign
+     * (not allowed in MongoDB)
+     *
+     * @param array $arr
+     * @return array
+     */
+    protected function sanitizeArrayKeys(array $arr): array
+    {
+        array_walk($arr, function ($val,$key) use (&$arr) {
+            if (preg_match('/^\$/', $key)) {
+                $newKey = preg_replace('/^\$/', '', $key);
+                $arr[$newKey] = $arr[$key];
+                unset($arr[$key]);
+                $key = $newKey;
+            }
+            // poor man's recursion...
+            if (is_array($val)) {
+                $arr[$key] = $this->sanitizeArrayKeys($arr[$key]);
+            }
+        });
+        return $arr;
     }
 }
