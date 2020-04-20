@@ -2,6 +2,7 @@
 
 namespace mipotech\requestlogger\storage;
 
+use Yii;
 use yii\base\Component;
 use mipotech\requestlogger\events\SaveEvent;
 use mipotech\requestlogger\models\RequestLog;
@@ -30,7 +31,14 @@ abstract class BaseStorage extends Component
             'model' => $model,
         ]);
         $this->trigger(self::EVENT_BEFORE_SAVE, $event);
-        $ret = $this->saveInternal($model);
+        try {
+            $ret = $this->saveInternal($model);
+        } catch (\Throwable $ex) {
+            if (YII_DEBUG) {
+                Yii::error("Could not log API entry", __CLASS__);
+            }
+            return false;
+        }
         $this->trigger(self::EVENT_AFTER_SAVE, $event);
         return $ret;
     }
