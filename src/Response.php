@@ -151,7 +151,7 @@ class Response extends \yii\web\Response
         } elseif (!empty($this->actionIds) && !in_array(Yii::$app->controller->action->id, $this->actionIds)) {
             Yii::debug('Skipping action id ' . Yii::$app->controller->action->id, __CLASS__);
             return false;
-        } elseif (!empty($this->environments) && defined('YII_ENV') && !in_array(YI_ENV, $this->environments)) {
+        } elseif (!empty($this->environments) && defined('YII_ENV') && !in_array(YII_ENV, $this->environments)) {
             Yii::debug('Skipping environment ' . YII_ENV, __CLASS__);
             return false;
         } elseif (!empty($this->excludeIps) && in_array(Yii::$app->request->userIP, $this->excludeIps)) {
