@@ -36,6 +36,12 @@ class Response extends \yii\web\Response
      */
     public $exludeIps = [];
     /**
+     * @var string[] an array of paths to exclude
+     * Exact string or wildcard
+     * @see https://www.php.net/manual/en/function.fnmatch.php
+     */
+    public $excludePaths = [];
+    /**
      * @var string
      */
     public $storageClass = 'mipotech\requestlogger\storage\Mongo';
@@ -105,8 +111,14 @@ class Response extends \yii\web\Response
         }
     }
 
+    /**
+     * Determine whether this request should be logged
+     *
+     * @return bool
+     */
     protected function isLogRequest(): bool
     {
+        // Check the controller type
         if (!empty($this->controllerTypes)) {
             $log = false;
             foreach ($this->controllerTypes as $type) {
@@ -119,7 +131,21 @@ class Response extends \yii\web\Response
                 Yii::debug('Skipping controller type ' . get_class(Yii::$app->controller), __CLASS__);
                 return false;
             }
-        } elseif (!empty($this->controllerIds) && !in_array(Yii::$app->controller->id, $this->controllerIds)) {
+        }
+
+        // Do we have excluded paths?
+        if (!empty($this->excludePaths)) {
+            $requestPath = Yii::$app->request->url;
+            foreach ($this->excludePaths as $path) {
+                if (fnmatch($path, $requestPath)) {
+                    Yii::debug("Skipping path {$requestPath}. Rule = {$path}", __CLASS__);
+                    return false;
+                }
+            }
+        }
+
+        // Check other rules
+        if (!empty($this->controllerIds) && !in_array(Yii::$app->controller->id, $this->controllerIds)) {
             Yii::debug('Skipping controller id ' . Yii::$app->controller->id, __CLASS__);
             return false;
         } elseif (!empty($this->actionIds) && !in_array(Yii::$app->controller->action->id, $this->actionIds)) {
@@ -136,6 +162,7 @@ class Response extends \yii\web\Response
             return false;
         }
 
+        // If all of the checks passed...
         return true;
     }
 }
